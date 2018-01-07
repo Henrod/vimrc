@@ -16,6 +16,10 @@ Plugin 'elixir-editors/vim-elixir'
 Plugin 'junegunn/fzf.vim'
 Plugin 'fatih/vim-go'
 Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-endwise'
+Plugin 'docunext/closetag.vim'
 
 "Use ag instead of ack
 let g:ackprg = 'ag --vimgrep --smart-case'                                                   
