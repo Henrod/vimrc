@@ -1,71 +1,31 @@
 set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=/usr/local/Cellar/fzf/HEAD-202872c
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'flazz/vim-colorschemes'
-Plugin 'kien/ctrlp.vim'
-Plugin 'elzr/vim-json'
 Plugin 'suan/vim-instant-markdown'
-Plugin 'godlygeek/tabular'
-Plugin 'evanmiller/nginx-vim-syntax'
-Plugin 'Shougo/neocomplete.vim'
-Plugin 'pangloss/vim-javascript'
 Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'Raimondi/delimitMate'
 Plugin 'nvie/vim-flake8'
-Plugin 'davidhalter/jedi-vim'
+Plugin 'w0rp/ale'
+Plugin 'mileszs/ack.vim'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'elixir-editors/vim-elixir'
+Plugin 'junegunn/fzf.vim'
+Plugin 'fatih/vim-go'
+Plugin 'scrooloose/nerdtree'
 
-Plugin 'scrooloose/syntastic'
-"let g:syntastic_check_on_open=1
+"Use ag instead of ack
+let g:ackprg = 'ag --vimgrep --smart-case'                                                   
+cnoreabbrev ag Ack                                                                           
+cnoreabbrev aG Ack                                                                           
+cnoreabbrev Ag Ack                                                                           
+cnoreabbrev AG Ack  
 
-Plugin 'marijnh/tern_for_vim'
-
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
-"
-"    set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-
-
-inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
-
-function! s:align()
-  let p = '^\s*|\s.*\s|\s*$'
-  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
-    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
-    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
-    Tabularize/|/l1
-    normal! 0
-    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
-  endif
-endfunction
+"allow ale conflicts
+let g:ale_emit_conflict_warnings = 0
 
 call vundle#end()
 
@@ -98,3 +58,49 @@ autocmd BufWritePost *.py call Flake8()
 "golang linter and automatic check on save
 set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
+
+" ALE config
+" After this is configured, :ALEFix will try and fix your JS code with ESLint.
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\}
+
+" use , as leader instead of \
+let mapleader = ","
+
+" toggle number on lines
+nmap <Leader>l :setlocal number!<CR>
+
+" highlight searchs
+set incsearch
+
+" case insensitive on searchs
+set ignorecase
+
+" case insensitive on search unless you include upper-case characters
+set smartcase
+
+" NERDTree toggle
+nmap <Leader>e :NERDTreeToggle<CR>
+
+" Enable code folding
+set foldmethod=indent
+set foldnestmax=10
+set nofoldenable
+set foldlevel=2
+
+" Map fzf commands to ; and ,t
+nmap ; :Buffers<CR>
+nmap <Leader>t :Files<CR>
+nmap <C-P> :Files<CR>
+
+" Map :Ack to ,a for search on project
+nmap <Leader>a :Ack 
+" Map ]q for next result on Ack and [q for previous result on Ack
+nmap ]q :cnext<CR>
+nmap [q :cprev<CR>
+" Map to close QuickFix (search) window 
+nmap <Leader>x :cclose<CR>
+
+" Search on project the work on current cursor with command+k
+nmap <C-k> :Ack! "\b<cword>\b" <CR>
